@@ -51,6 +51,7 @@ class ReadData:
 
     dictConstants = {}
     dictTechs = {}
+    dictZones = {}
 
     # acceptable values for the capacity factor fractions in the powerzones.xml file
     CF_VALS = ('0.9', '0.8', '0.5', '0.3', '0.1')
@@ -98,8 +99,31 @@ class ReadData:
                     self.dictTechs[xp] = {}
             self.dictTechs[tempKey] = dictTech
 
+    def read_powerzones(self, f):
+        """
+        Read powerzones.xml input data.
+
+        :return:
+        """
+        obj = untangle.parse(f)
+
+        root = obj.powerzones
+        zones = root.zone
+
+        for v in zones:
+
+            vid = v['id']
+            self.dictZones[vid] = {}
+            lmps = v.lmps
+            cfs = lmps.cf
+
+            for item in cfs:
+                cfv = item['value']
+                cfd = item.cdata
+                self.dictZones[vid][cfv] = cfd           
 
 #rdt = ReadData()
+#rdt.read_powerzones('powerzones.xml')
 #rdt.read_constants('constants.xml')
 #rdt.read_techs('technologies.xml')
 
